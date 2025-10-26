@@ -38,6 +38,11 @@ export const client = defineType({
       },
     }),
     defineField({
+      name: 'leadingQuestion',
+      title: 'Leading Question',
+      type: 'question',
+    }),
+    defineField({
       name: 'surveyQuestions',
       title: 'Survey Questions',
       type: 'array',
