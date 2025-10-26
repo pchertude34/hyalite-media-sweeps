@@ -58,7 +58,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
   return (
     <html lang="en" className={`${inter.variable} bg-white text-black`}>
       <body>
-        <main className="">{children}</main>
+        <main>{children}</main>
       </body>
     </html>
   )

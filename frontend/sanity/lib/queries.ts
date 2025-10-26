@@ -104,7 +104,5 @@ export const pagesSlugs = defineQuery(`
 //   }
 // }`
 export const clientQuestionQuery =
-  defineQuery(`*[_type == "client" && slug.current == $clientSlug][0]{
-    surveyQuestions[]
-  }
+  defineQuery(`*[_type == "client" && slug.current == $clientSlug][0]
 `)
