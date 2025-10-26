@@ -40,6 +40,12 @@ export type Link = {
   openInNewTab?: boolean
 }
 
+export type Question = {
+  _type: 'question'
+  questionText: string
+  responseOptions: Array<string>
+}
+
 export type InfoSection = {
   _type: 'infoSection'
   heading?: string
@@ -110,6 +116,33 @@ export type BlockContent = Array<{
   _type: 'block'
   _key: string
 }>
+
+export type Client = {
+  _id: string
+  _type: 'client'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  slug: Slug
+  logo?: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  surveyQuestions?: Array<
+    {
+      _key: string
+    } & Question
+  >
+}
 
 export type Settings = {
   _id: string
@@ -397,25 +430,25 @@ export type SanityImagePalette = {
 
 export type SanityImageDimensions = {
   _type: 'sanity.imageDimensions'
-  height?: number
-  width?: number
-  aspectRatio?: number
+  height: number
+  width: number
+  aspectRatio: number
 }
 
 export type SanityImageHotspot = {
   _type: 'sanity.imageHotspot'
-  x?: number
-  y?: number
-  height?: number
-  width?: number
+  x: number
+  y: number
+  height: number
+  width: number
 }
 
 export type SanityImageCrop = {
   _type: 'sanity.imageCrop'
-  top?: number
-  bottom?: number
-  left?: number
-  right?: number
+  top: number
+  bottom: number
+  left: number
+  right: number
 }
 
 export type SanityFileAsset = {
@@ -497,8 +530,10 @@ export type SanityAssetSourceData = {
 export type AllSanitySchemaTypes =
   | CallToAction
   | Link
+  | Question
   | InfoSection
   | BlockContent
+  | Client
   | Settings
   | Page
   | Post
@@ -805,6 +840,15 @@ export type PostPagesSlugsResult = Array<{
 export type PagesSlugsResult = Array<{
   slug: string
 }>
+// Variable: clientQuestionQuery
+// Query: *[_type == "client" && slug.current == $clientSlug][0]{    surveyQuestions[]  }
+export type ClientQuestionQueryResult = {
+  surveyQuestions: Array<
+    {
+      _key: string
+    } & Question
+  > | null
+} | null
 
 // Query TypeMap
 import '@sanity/client'
@@ -818,5 +862,6 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
+    '*[_type == "client" && slug.current == $clientSlug][0]{\n    surveyQuestions[]\n  }\n': ClientQuestionQueryResult
   }
 }
