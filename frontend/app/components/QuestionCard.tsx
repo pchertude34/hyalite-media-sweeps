@@ -2,16 +2,19 @@
 import React, {useState} from 'react'
 import QuestionResponseButtons from './QuestionResponseButtons'
 import {ClientQuestionQueryResult, Question} from '@/sanity.types'
+import {InferSelectModel} from 'drizzle-orm'
+import {usersTable} from '@/db/schema'
 
 type QuestionCardProps = {
   leadingQuestion: Question
   surveyQuestions: Question[]
+  user?: InferSelectModel<typeof usersTable>
 }
 
 export function QuestionCard(props: QuestionCardProps) {
-  const {leadingQuestion, surveyQuestions} = props
+  const {leadingQuestion, surveyQuestions, user} = props
   const [hasAnsweredLeadingQuestion, setHasAnsweredLeadingQuestion] = useState(false)
-  const [questionIndex, setQuestionIndex] = useState(0)
+  const [questionIndex, setQuestionIndex] = useState(user?.page || 0)
 
   function handleLeadingQuestionAnswered(answer: {
     _key?: string

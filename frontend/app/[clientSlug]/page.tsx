@@ -2,15 +2,38 @@ import {clientQuestionQuery} from '@/sanity/lib/queries'
 import {client} from '@/sanity/lib/client'
 import {ClientQuestionQueryResult, Question} from '@/sanity.types'
 import QuestionResponseButtons from '../components/QuestionResponseButtons'
-import clsx from 'clsx'
 import {QuestionCard} from '../components/QuestionCard'
+import {db} from '@/db'
+import {usersTable} from '@/db/schema'
+import {eq, InferSelectModel} from 'drizzle-orm'
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{clientSlug: string; questionId: string}>
+  searchParams: Promise<{[key: string]: string | string[] | undefined}>
 }) {
   const {clientSlug, questionId} = await params
+  const {id} = await searchParams
+
+  let user: InferSelectModel<typeof usersTable> | undefined
+
+  if (id) {
+    user = await db.query.users.findFirst({
+      where: eq(usersTable.externalId, id as string),
+    })
+
+    if (!user) {
+      ;[user] = await db
+        .insert(usersTable)
+        .values({
+          externalId: id as string,
+          page: 0,
+        })
+        .returning()
+    }
+  }
 
   const data = await client.fetch(clientQuestionQuery, {
     clientSlug,
