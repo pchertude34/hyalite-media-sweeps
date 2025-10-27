@@ -12,6 +12,7 @@
     "typegen": "sanity typegen generate"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "@sanity/client": "^7.9.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/uuid": "^3.0.2",
@@ -21,6 +22,8 @@
     "autoprefixer": "^10.4.21",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.7",
     "next": "^15.5.0",
     "next-sanity": "^10.0.14",
     "postcss": "^8.5.6",
@@ -35,6 +38,7 @@
     "@types/node": "^20.19.11",
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
+    "drizzle-kit": "^0.31.5",
     "eslint": "^9.34.0",
     "eslint-config-next": "^15.5.0",
     "typescript": "5.9.2"
