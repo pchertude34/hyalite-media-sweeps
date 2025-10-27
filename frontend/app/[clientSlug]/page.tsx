@@ -6,19 +6,21 @@ import {QuestionCard} from '../components/QuestionCard'
 import {db} from '@/db'
 import {usersTable} from '@/db/schema'
 import {eq, InferSelectModel} from 'drizzle-orm'
+import {updateUserPage} from '../actions'
 
 export default async function Page({
   params,
   searchParams,
 }: {
-  params: Promise<{clientSlug: string; questionId: string}>
+  params: Promise<{clientSlug: string}>
   searchParams: Promise<{[key: string]: string | string[] | undefined}>
 }) {
-  const {clientSlug, questionId} = await params
+  const {clientSlug} = await params
   const {id} = await searchParams
 
   let user: InferSelectModel<typeof usersTable> | undefined
 
+  // Create or find the user based on the query param 'id'
   if (id) {
     user = await db.query.users.findFirst({
       where: eq(usersTable.externalId, id as string),
@@ -44,25 +46,11 @@ export default async function Page({
   }
 
   return (
-    <QuestionCard leadingQuestion={data.leadingQuestion} surveyQuestions={data.surveyQuestions} />
+    <QuestionCard
+      leadingQuestion={data.leadingQuestion}
+      surveyQuestions={data.surveyQuestions}
+      user={user}
+      onSurveyQuestionAnswered={updateUserPage}
+    />
   )
-
-  // return (
-  //   // Outer wrapper: full width/height so the parent iframe can size it.
-  //   // Use transparent background in embed mode so parent controls visuals.
-  //   <div className="w-full h-full min-h-[200px] flex items-center justify-center bg-transparent">
-  //     <article className="w-full h-full p-4 rounded-lg shadow-sm">
-  //       <header className="mb-4">
-  //         <h2 className="text-lg font-semibold text-gray-900 text-center">
-  //           {question.questionText}
-  //         </h2>
-  //         {(question as any).description && (
-  //           <p className="mt-2 text-sm text-gray-500">{(question as any).description}</p>
-  //         )}
-  //       </header>
-
-  //       <QuestionResponseButtons answers={question?.answers ?? []} />
-  //     </article>
-  //   </div>
-  // )
 }

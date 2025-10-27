@@ -9,12 +9,15 @@ type QuestionCardProps = {
   leadingQuestion: Question
   surveyQuestions: Question[]
   user?: InferSelectModel<typeof usersTable>
+  onSurveyQuestionAnswered: (data: FormData) => void
 }
 
 export function QuestionCard(props: QuestionCardProps) {
-  const {leadingQuestion, surveyQuestions, user} = props
+  const {leadingQuestion, surveyQuestions, user, onSurveyQuestionAnswered} = props
   const [hasAnsweredLeadingQuestion, setHasAnsweredLeadingQuestion] = useState(false)
-  const [questionIndex, setQuestionIndex] = useState(user?.page || 0)
+  const [questionIndex, setQuestionIndex] = useState(
+    user?.page && user?.page < surveyQuestions.length ? user?.page : 0,
+  )
 
   function handleLeadingQuestionAnswered(answer: {
     _key?: string
@@ -29,10 +32,23 @@ export function QuestionCard(props: QuestionCardProps) {
     answerText: string
     answerUrl?: string
   }) {
-    setQuestionIndex((prevIndex) => prevIndex + 1)
+    // wrap around to the first question if at the end
+    setQuestionIndex((prevIndex) => {
+      if (prevIndex + 1 >= surveyQuestions.length) {
+        return 0
+      }
+      return prevIndex + 1
+    })
 
     if (answer.answerUrl) {
       window.open(answer.answerUrl, '_blank', 'noopener,noreferrer')
+    }
+
+    if (user) {
+      const formData = new FormData()
+      formData.append('externalId', user.externalId)
+      formData.append('page', String(questionIndex + 1))
+      onSurveyQuestionAnswered(formData)
     }
   }
 
