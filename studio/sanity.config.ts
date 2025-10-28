@@ -70,11 +70,7 @@ export default defineConfig({
           },
           {
             route: '/:slug',
-            filter: `_type == "page" && slug.current == $slug || _id == $slug`,
-          },
-          {
-            route: '/posts/:slug',
-            filter: `_type == "post" && slug.current == $slug || _id == $slug`,
+            filter: `_type == "client" && slug.current == $slug || _id == $slug`,
           },
         ]),
         // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/presentation-resolver-api#8d8bca7bfcd7
@@ -84,7 +80,7 @@ export default defineConfig({
             message: 'This document is used on all pages',
             tone: 'positive',
           }),
-          page: defineLocations({
+          client: defineLocations({
             select: {
               name: 'name',
               slug: 'slug.current',

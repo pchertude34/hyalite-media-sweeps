@@ -8,6 +8,13 @@
       "when": 1761562669204,
       "tag": "0000_colossal_vindicator",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761620364500,
+      "tag": "0001_complex_sasquatch",
+      "breakpoints": true
     }
   ]
 }

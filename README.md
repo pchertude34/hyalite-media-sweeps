@@ -102,3 +102,20 @@ They will be able to access the deployed Studio, where you can collaborate toget
 - [Next.js documentation](https://nextjs.org/docs)
 - [Join the Sanity Community](https://slack.sanity.io)
 - [Learn Sanity](https://www.sanity.io/learn)
+
+```
+<iframe id="sweeps-frame" width="600" height="400" style="border:none;"></iframe>
+
+  <script>
+    const USER_PARAM = 'id'
+    const CLIENT_URL = 'http://localhost:3000/west-coast-web-designs';
+
+    const params = new URLSearchParams(window.location.search);
+    const idParam = new URLSearchParams();
+
+    if (params.has(USER_PARAM)) idParam.set(USER_PARAM, params.get(USER_PARAM))
+
+    const iframeUrl = CLIENT_URL + (idParam ? '?' + idParam.toString() : '')
+    document.getElementById("sweeps-frame").src = iframeUrl;
+  </script>
+```

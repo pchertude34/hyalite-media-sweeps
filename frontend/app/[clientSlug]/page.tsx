@@ -5,7 +5,7 @@ import QuestionResponseButtons from '../components/QuestionResponseButtons'
 import {QuestionCard} from '../components/QuestionCard'
 import {db} from '@/db'
 import {usersTable} from '@/db/schema'
-import {eq, InferSelectModel} from 'drizzle-orm'
+import {eq, InferSelectModel, and} from 'drizzle-orm'
 import {updateUserPage} from '../actions'
 
 export default async function Page({
@@ -23,13 +23,14 @@ export default async function Page({
   // Create or find the user based on the query param 'id'
   if (id) {
     user = await db.query.users.findFirst({
-      where: eq(usersTable.externalId, id as string),
+      where: and(eq(usersTable.externalId, id as string), eq(usersTable.clientId, clientSlug)),
     })
 
     if (!user) {
       ;[user] = await db
         .insert(usersTable)
         .values({
+          clientId: clientSlug,
           externalId: id as string,
           page: 0,
         })
