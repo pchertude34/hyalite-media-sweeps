@@ -15,6 +15,20 @@
       "when": 1761620364500,
       "tag": "0001_complex_sasquatch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761659495455,
+      "tag": "0002_cynical_professor_monster",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1761665669166,
+      "tag": "0003_sour_diamondback",
+      "breakpoints": true
     }
   ]
 }

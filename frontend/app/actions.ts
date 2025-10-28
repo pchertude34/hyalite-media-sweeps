@@ -2,7 +2,7 @@
 
 import {draftMode} from 'next/headers'
 import {db} from '@/db'
-import {usersTable} from '@/db/schema'
+import {questionAnalyticsTable, usersTable} from '@/db/schema'
 import {eq} from 'drizzle-orm'
 
 export async function disableDraftMode() {
@@ -16,10 +16,30 @@ export async function disableDraftMode() {
 
 export async function updateUserPage(formData: FormData) {
   const externalId = formData.get('externalId') as string
-  const page = formData.get('page') as string
+  const questionIndex = formData.get('questionIndex') as string
 
   await db
     .update(usersTable)
-    .set({page: Number(page)})
+    .set({questionIndex: Number(questionIndex)})
     .where(eq(usersTable.externalId, externalId))
+}
+
+export async function trackQuestionResponse(formData: FormData) {
+  const externalId = formData.get('externalId') as string
+  const questionIndex = formData.get('questionIndex') as string
+  const clientId = formData.get('clientId') as string
+  const questionId = formData.get('questionId') as string
+  const questionText = formData.get('questionText') as string
+  const answerText = formData.get('answerText') as string
+  const answerStatus = formData.get('answerStatus') as string
+
+  await db.insert(questionAnalyticsTable).values({
+    externalId,
+    questionIndex: Number(questionIndex),
+    clientId,
+    questionId,
+    questionText,
+    answerText,
+    answerStatus,
+  })
 }

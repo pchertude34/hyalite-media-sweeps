@@ -41,12 +41,15 @@ export const client = defineType({
       name: 'leadingQuestion',
       title: 'Leading Question',
       type: 'question',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'surveyQuestions',
       title: 'Survey Questions',
       type: 'array',
       of: [{type: 'question'}],
+      validation: (Rule) =>
+        Rule.required().min(1).error('At least one survey question is required.'),
     }),
   ],
 })

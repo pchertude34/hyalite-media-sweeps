@@ -1,15 +1,12 @@
 'use client'
-import React, {useState} from 'react'
+import React from 'react'
 import clxs from 'clsx'
+import {Question} from '@/sanity.types'
 
 type Props = {
-  answers: {
-    _key?: string
-    answerText: string
-    answerUrl?: string
-  }[]
+  answers: NonNullable<Question['answers']>
   className?: string
-  onAnswer: (answer: {_key?: string; answerText: string; answerUrl?: string}) => void
+  onAnswer: (answer: NonNullable<Question['answers']>[number]) => void
 }
 
 export default function QuestionOptions({answers, className, onAnswer}: Props) {

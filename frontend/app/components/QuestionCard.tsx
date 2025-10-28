@@ -1,37 +1,32 @@
 'use client'
 import React, {useState} from 'react'
 import QuestionResponseButtons from './QuestionResponseButtons'
-import {ClientQuestionQueryResult, Question} from '@/sanity.types'
+import {Client, Question} from '@/sanity.types'
 import {InferSelectModel} from 'drizzle-orm'
 import {usersTable} from '@/db/schema'
+import {trackQuestionResponse, updateUserPage} from '../actions'
 
 type QuestionCardProps = {
-  leadingQuestion: Question
-  surveyQuestions: Question[]
+  clientData: Client
   user?: InferSelectModel<typeof usersTable>
-  onSurveyQuestionAnswered: (data: FormData) => void
 }
 
 export function QuestionCard(props: QuestionCardProps) {
-  const {leadingQuestion, surveyQuestions, user, onSurveyQuestionAnswered} = props
+  const {
+    clientData: {leadingQuestion, surveyQuestions},
+    user,
+  } = props
+
   const [hasAnsweredLeadingQuestion, setHasAnsweredLeadingQuestion] = useState(false)
   const [questionIndex, setQuestionIndex] = useState(
-    user?.page && user?.page < surveyQuestions.length ? user?.page : 0,
+    user?.questionIndex && user?.questionIndex < surveyQuestions.length ? user?.questionIndex : 0,
   )
 
-  function handleLeadingQuestionAnswered(answer: {
-    _key?: string
-    answerText: string
-    answerUrl?: string
-  }) {
+  function handleLeadingQuestionAnswered(answer: NonNullable<Question['answers']>[number]) {
     setHasAnsweredLeadingQuestion(true)
   }
 
-  function handleSurveyQuestionAnswered(answer: {
-    _key?: string
-    answerText: string
-    answerUrl?: string
-  }) {
+  function handleSurveyQuestionAnswered(answer: NonNullable<Question['answers']>[number]) {
     // wrap around to the first question if at the end
     setQuestionIndex((prevIndex) => {
       if (prevIndex + 1 >= surveyQuestions.length) {
@@ -47,8 +42,14 @@ export function QuestionCard(props: QuestionCardProps) {
     if (user) {
       const formData = new FormData()
       formData.append('externalId', user.externalId)
-      formData.append('page', String(questionIndex + 1))
-      onSurveyQuestionAnswered(formData)
+      formData.append('questionIndex', String(questionIndex + 1))
+      formData.append('clientId', user.clientId)
+      formData.append('questionId', surveyQuestions[questionIndex]._key)
+      formData.append('questionText', surveyQuestions[questionIndex].questionText)
+      formData.append('answerText', answer.answerText)
+      formData.append('answerStatus', answer.answerType)
+      updateUserPage(formData)
+      trackQuestionResponse(formData)
     }
   }
 

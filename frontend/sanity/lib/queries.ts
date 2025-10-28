@@ -96,13 +96,29 @@ export const pagesSlugs = defineQuery(`
   {"slug": slug.current}
 `)
 
-// `
-// *[_type == "client" && slug.current == $clientSlug][0]{
-//   "surveyQuestion": surveyQuesions[0]{
-//     _id,
-//     questionText,
-//   }
-// }`
-export const clientQuestionQuery =
-  defineQuery(`*[_type == "client" && slug.current == $clientSlug][0]
+export const clientQuery = defineQuery(`
+  *[_type == "client" && slug.current == $clientSlug][0]{
+    _id,
+    name,
+    slug,
+    leadingQuestion{
+      questionText,
+      answers[]{
+        _key,
+        answerText,
+        answerUrl,
+        answerType
+      }
+    },
+    surveyQuestions[]{
+      _key,
+      questionText,
+      answers[]{
+        _key,
+        answerText,
+        answerUrl,
+        answerType
+      }
+    }
+  }
 `)
