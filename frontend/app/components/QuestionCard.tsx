@@ -10,14 +10,14 @@ import {renderTemplate} from '../client-utils'
 type QuestionCardProps = {
   clientData: Client
   user?: InferSelectModel<typeof usersTable>
-  name?: string
+  templateValues?: Record<string, string | undefined>
 }
 
 export function QuestionCard(props: QuestionCardProps) {
   const {
     clientData: {leadingQuestion, surveyQuestions, headline, thankYouMessage, maxAnswers},
     user,
-    name,
+    templateValues,
   } = props
 
   const [hasAnsweredLeadingQuestion, setHasAnsweredLeadingQuestion] = useState(false)
@@ -25,6 +25,8 @@ export function QuestionCard(props: QuestionCardProps) {
   const [questionIndex, setQuestionIndex] = useState(
     user?.questionIndex && user?.questionIndex < surveyQuestions.length ? user?.questionIndex : 0,
   )
+
+  console.log('templateValues :>> ', templateValues)
 
   function handleLeadingQuestionAnswered(answer: NonNullable<Question['answers']>[number]) {
     setHasAnsweredLeadingQuestion(true)
@@ -76,13 +78,13 @@ export function QuestionCard(props: QuestionCardProps) {
         <div className="my-auto h-full w-full">
           {headline && (
             <h2 className="text-2xl md:text-3xl mb-10 text-center font-semibold underline">
-              {renderTemplate(headline, {name: name})}
+              {renderTemplate(headline, {...templateValues})}
             </h2>
           )}
           {!hasAnsweredLeadingQuestion && (
             <>
               <p className="text-lg md:text-xl mb-10 text-center">
-                {renderTemplate(leadingQuestion.questionText, {name: name})}
+                {renderTemplate(leadingQuestion.questionText, {...templateValues})}
               </p>
               <QuestionResponseButtons
                 answers={leadingQuestion.answers}
