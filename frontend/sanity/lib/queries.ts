@@ -101,6 +101,9 @@ export const clientQuery = defineQuery(`
     _id,
     name,
     slug,
+    headline,
+    maxAnswers,
+    thankYouMessage,
     leadingQuestion{
       questionText,
       answers[]{

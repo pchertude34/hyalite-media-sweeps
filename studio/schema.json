@@ -165,6 +165,20 @@
         },
         "optional": true
       },
+      "headline": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "maxAnswers": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
       "leadingQuestion": {
         "type": "objectAttribute",
         "value": {
@@ -192,6 +206,13 @@
               "name": "question"
             }
           }
+        },
+        "optional": false
+      },
+      "thankYouMessage": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": false
       }

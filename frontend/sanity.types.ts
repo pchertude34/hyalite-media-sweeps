@@ -40,12 +40,15 @@ export type Client = {
     crop?: SanityImageCrop
     _type: 'image'
   }
+  headline?: string
+  maxAnswers?: number
   leadingQuestion: Question
   surveyQuestions: Array<
     {
       _key: string
     } & Question
   >
+  thankYouMessage: string
 }
 
 export type Question = {
@@ -410,11 +413,14 @@ export type PostPagesSlugsResult = Array<never>
 // Query: *[_type == "page" && defined(slug.current)]  {"slug": slug.current}
 export type PagesSlugsResult = Array<never>
 // Variable: clientQuery
-// Query: *[_type == "client" && slug.current == $clientSlug][0]{    _id,    name,    slug,    leadingQuestion{      questionText,      answers[]{        _key,        answerText,        answerUrl,        answerType      }    },    surveyQuestions[]{      _key,      questionText,      answers[]{        _key,        answerText,        answerUrl,        answerType      }    }  }
+// Query: *[_type == "client" && slug.current == $clientSlug][0]{    _id,    name,    slug,    headline,    maxAnswers,    thankYouMessage,    leadingQuestion{      questionText,      answers[]{        _key,        answerText,        answerUrl,        answerType      }    },    surveyQuestions[]{      _key,      questionText,      answers[]{        _key,        answerText,        answerUrl,        answerType      }    }  }
 export type ClientQueryResult = {
   _id: string
   name: string
   slug: Slug
+  headline: string | null
+  maxAnswers: number | null
+  thankYouMessage: string
   leadingQuestion: {
     questionText: string
     answers: Array<{
@@ -448,6 +454,6 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
-    '\n  *[_type == "client" && slug.current == $clientSlug][0]{\n    _id,\n    name,\n    slug,\n    leadingQuestion{\n      questionText,\n      answers[]{\n        _key,\n        answerText,\n        answerUrl,\n        answerType\n      }\n    },\n    surveyQuestions[]{\n      _key,\n      questionText,\n      answers[]{\n        _key,\n        answerText,\n        answerUrl,\n        answerType\n      }\n    }\n  }\n': ClientQueryResult
+    '\n  *[_type == "client" && slug.current == $clientSlug][0]{\n    _id,\n    name,\n    slug,\n    headline,\n    maxAnswers,\n    thankYouMessage,\n    leadingQuestion{\n      questionText,\n      answers[]{\n        _key,\n        answerText,\n        answerUrl,\n        answerType\n      }\n    },\n    surveyQuestions[]{\n      _key,\n      questionText,\n      answers[]{\n        _key,\n        answerText,\n        answerUrl,\n        answerType\n      }\n    }\n  }\n': ClientQueryResult
   }
 }
