@@ -4,9 +4,9 @@ import clxs from 'clsx'
 import {Question} from '@/sanity.types'
 
 type Props = {
-  answers: NonNullable<Question['answers']>
+  answers: Question['answers']
   className?: string
-  onAnswer: (answer: NonNullable<Question['answers']>[number]) => void
+  onAnswer: (answer: Question['answers'][number]) => void
 }
 
 export default function QuestionOptions({answers, className, onAnswer}: Props) {

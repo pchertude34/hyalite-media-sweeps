@@ -41,7 +41,8 @@ export const client = defineType({
       name: 'headline',
       title: 'Headline',
       type: 'string',
-      description: 'A message to display at the top of the survey.',
+      description:
+        "A message to display at the top of the survey. Use {{name}} to template the user's name.",
     }),
     defineField({
       name: 'maxAnswers',
@@ -55,12 +56,15 @@ export const client = defineType({
       name: 'leadingQuestion',
       title: 'Leading Question',
       type: 'question',
+      description:
+        "The question presented to users before the survey questions. Use {{name}} to template the user's name.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'surveyQuestions',
       title: 'Survey Questions',
       type: 'array',
+      description: "Use {{name}} to template the user's name.",
       of: [{type: 'question'}],
       validation: (Rule) =>
         Rule.required().min(1).error('At least one survey question is required.'),
@@ -69,7 +73,8 @@ export const client = defineType({
       name: 'thankYouMessage',
       title: 'Thank You Message',
       type: 'text',
-      description: 'Message to display to users after they complete the survey.',
+      description:
+        "Message to display to users after they complete the survey. Use {{name}} to template the user's name.",
       validation: (Rule) => Rule.required(),
     }),
   ],

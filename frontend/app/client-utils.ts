@@ -28,3 +28,7 @@ export function handleError(error: unknown) {
     })
   }
 }
+
+export function renderTemplate(template: string, values: Record<string, string | undefined>) {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => values[key] ?? '')
+}

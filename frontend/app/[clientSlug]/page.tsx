@@ -15,7 +15,7 @@ export default async function Page({
   searchParams: Promise<{[key: string]: string | string[] | undefined}>
 }) {
   const {clientSlug} = await params
-  const {id} = await searchParams
+  const {id, name} = await searchParams
 
   let user: InferSelectModel<typeof usersTable> | undefined
 
@@ -45,5 +45,5 @@ export default async function Page({
     return <div className="text-gray-600">Question not found</div>
   }
 
-  return <QuestionCard clientData={data as Client} user={user} />
+  return <QuestionCard clientData={data as Client} user={user} name={name as string} />
 }

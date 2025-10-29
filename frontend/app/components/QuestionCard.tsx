@@ -5,16 +5,19 @@ import {Client, Question} from '@/sanity.types'
 import {InferSelectModel} from 'drizzle-orm'
 import {usersTable} from '@/db/schema'
 import {trackQuestionResponse, updateUserPage} from '../actions'
+import {renderTemplate} from '../client-utils'
 
 type QuestionCardProps = {
   clientData: Client
   user?: InferSelectModel<typeof usersTable>
+  name?: string
 }
 
 export function QuestionCard(props: QuestionCardProps) {
   const {
     clientData: {leadingQuestion, surveyQuestions, headline, thankYouMessage, maxAnswers},
     user,
+    name,
   } = props
 
   const [hasAnsweredLeadingQuestion, setHasAnsweredLeadingQuestion] = useState(false)
@@ -71,12 +74,16 @@ export function QuestionCard(props: QuestionCardProps) {
     <div className="w-full h-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-purple-800 p-4">
       <article className="flex flex-col w-full max-w-4xl min-h-64 p-6 md:p-10 rounded-lg shadow-sm bg-white items-center">
         <div className="my-auto h-full w-full">
-          <h2 className="text-2xl md:text-3xl mb-10 text-center font-semibold underline">
-            {headline}
-          </h2>
+          {headline && (
+            <h2 className="text-2xl md:text-3xl mb-10 text-center font-semibold underline">
+              {renderTemplate(headline, {name: name})}
+            </h2>
+          )}
           {!hasAnsweredLeadingQuestion && (
             <>
-              <p className="text-lg md:text-xl mb-10 text-center">{leadingQuestion.questionText}</p>
+              <p className="text-lg md:text-xl mb-10 text-center">
+                {renderTemplate(leadingQuestion.questionText, {name: name})}
+              </p>
               <QuestionResponseButtons
                 answers={leadingQuestion.answers}
                 onAnswer={handleLeadingQuestionAnswered}
