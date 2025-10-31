@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts'
 import {Card, Stack, Box, Text, Label, Select, Inline, Button} from '@sanity/ui'
 import {RefreshIcon} from '@sanity/icons'
+import DatePicker from 'react-multi-date-picker'
 
 // Use NEXT_PUBLIC_ prefix for client-side access, with fallback
 const {SANITY_STUDIO_APP_URL} = process.env
@@ -122,6 +123,25 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
               loading={loading}
             />
           </Inline>
+          {timeframe === 'custom' && (
+            <DatePicker
+              style={{
+                borderRadius: '4px',
+                border: '1px solid var(--card-border-color)',
+                fontSize: 'var(--font-size-2)',
+                color: 'var(--text-color)',
+                padding: '6px 12px',
+                boxShadow: 'var(--card-shadow)',
+                backgroundColor: 'var(--card-bg-color)',
+              }}
+              range
+              onChange={(value) => {
+                const [day1, day2] = value
+                setStartDate(day1 ? day1.format('YYYY-MM-DD') : '')
+                setEndDate(day2 ? day2.format('YYYY-MM-DD') : '')
+              }}
+            />
+          )}
         </Stack>
       </Card>
       <Card padding={4} shadow={1} radius={2} tone="neutral">
