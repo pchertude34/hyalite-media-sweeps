@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts'
 
 type AnalyticsGraphProps = {
@@ -15,56 +15,147 @@ type AnalyticsGraphProps = {
   onMenuAction?: (action: any) => void
 }
 
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-]
+type AnalyticsData = {
+  questionText: string
+  questionId: string
+  positive?: number
+  negative?: number
+  total: number
+}
 
 export function AnalyticsGraph(props: AnalyticsGraphProps) {
+  const [data, setData] = useState<AnalyticsData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [timeframe, setTimeframe] = useState<string>('last30days')
+  const [startDate, setStartDate] = useState<string>('')
+  const [endDate, setEndDate] = useState<string>('')
+
+  const clientSlug = props.document.displayed?.slug?.current
+  const surveyQuestions = props.document.displayed?.surveyQuestions || []
+
+  console.log('props :>> ', props)
+
+  useEffect(() => {
+    if (!clientSlug) return
+
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true)
+
+        // Build query parameters
+        const params = new URLSearchParams({
+          timeframe,
+        })
+
+        if (timeframe === 'custom') {
+          if (startDate) params.append('startDate', startDate)
+          if (endDate) params.append('endDate', endDate)
+        }
+
+        const response = await fetch(
+          `http://localhost:3000/api/analytics/${clientSlug}?${params.toString()}`,
+        )
+        const result = await response.json()
+
+        if (result.success) {
+          // add question index and text to each data item
+          result.data = result.data.map((item: AnalyticsData) => {
+            const questionIndex = surveyQuestions.findIndex((q: any) => q._key === item.questionId)
+            const questionText =
+              questionIndex !== -1
+                ? surveyQuestions[questionIndex].questionText
+                : 'Unknown Question'
+            return {
+              ...item,
+              questionText,
+              questionIndex,
+            }
+          })
+
+          // sort by question index
+          result.data.sort((a: any, b: any) => a.questionIndex - b.questionIndex)
+
+          setData(result.data)
+        } else {
+          setError(result.error || 'Failed to fetch analytics')
+        }
+      } catch (err) {
+        setError('Failed to fetch analytics data')
+        console.error('Analytics fetch error:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalytics()
+  }, [clientSlug, timeframe, startDate, endDate])
+
+  if (error) {
+    return <div style={{padding: '20px', color: 'red'}}>Error: {error}</div>
+  }
+
   return (
-    <div>
+    <div style={{padding: '20px'}}>
+      <h3 style={{marginBottom: '20px'}}>Survey Analytics for {props.document.displayed?.name}</h3>
+
+      {/* Timeframe Controls */}
+      <div
+        style={{
+          marginBottom: '20px',
+          padding: '15px',
+          border: '1px solid #e1e5e9',
+          borderRadius: '4px',
+          backgroundColor: '#f9f9fb',
+        }}
+      >
+        <div style={{marginBottom: '10px'}}>
+          <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>
+            Time Period:
+          </label>
+          <select
+            value={timeframe}
+            onChange={(e) => setTimeframe(e.target.value)}
+            style={{padding: '5px 10px', borderRadius: '4px', border: '1px solid #ccc'}}
+          >
+            <option value="all">All Time</option>
+            <option value="last7days">Last 7 Days</option>
+            <option value="last30days">Last 30 Days</option>
+            <option value="last90days">Last 90 Days</option>
+            <option value="custom">Custom Range</option>
+          </select>
+        </div>
+
+        {timeframe === 'custom' && (
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+            <div>
+              <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
+                Start Date:
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                style={{padding: '5px', borderRadius: '4px', border: '1px solid #ccc'}}
+              />
+            </div>
+            <div>
+              <label style={{display: 'block', marginBottom: '5px', fontSize: '14px'}}>
+                End Date:
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                style={{padding: '5px', borderRadius: '4px', border: '1px solid #ccc'}}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
       <BarChart
-        style={{width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618}}
+        style={{width: '100%', aspectRatio: 1.618}}
         responsive
         data={data}
         margin={{
@@ -75,21 +166,36 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
+        <XAxis
+          dataKey="questionText"
+          tick={{fontSize: 12}}
+          interval={0}
+          angle={-45}
+          textAnchor="end"
+          height={100}
+        />
         <YAxis width="auto" />
         <Tooltip
           content={({active, payload, label}) => {
             if (active && payload && payload.length) {
-              const total = payload.reduce((sum, entry) => sum + entry.value, 0)
+              const total = payload.reduce((sum, entry) => sum + (entry.value || 0), 0)
               return (
-                <div className="bg-white p-2 border rounded shadow">
-                  <p>{`${label}`}</p>
+                <div
+                  style={{
+                    backgroundColor: 'white',
+                    padding: '8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <p style={{margin: '0 0 4px 0', fontWeight: 'bold'}}>{`${label}`}</p>
                   {payload.map((entry, index) => (
-                    <p key={index} style={{color: entry.color}}>
-                      {`${entry.dataKey}: ${entry.value}`}
+                    <p key={index} style={{color: entry.color, margin: '2px 0'}}>
+                      {`${entry.dataKey === 'positive' ? 'Positive' : 'Negative'}: ${entry.value}`}
                     </p>
                   ))}
-                  <p className="font-bold">{`Total: ${total}`}</p>
+                  <p style={{fontWeight: 'bold', margin: '4px 0 0 0'}}>{`Total: ${total}`}</p>
                 </div>
               )
             }
@@ -98,16 +204,18 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
         />
         <Legend />
         <Bar
-          dataKey="pv"
+          dataKey="positive"
           stackId="a"
-          fill="#8884d8"
-          activeBar={<Rectangle fill="pink" stroke="blue" />}
+          fill="#4ade80"
+          name="Positive Responses"
+          activeBar={<Rectangle fill="#22c55e" stroke="#16a34a" />}
         />
         <Bar
-          dataKey="uv"
+          dataKey="negative"
           stackId="a"
-          fill="#82ca9d"
-          activeBar={<Rectangle fill="gold" stroke="purple" />}
+          fill="#f87171"
+          name="Negative Responses"
+          activeBar={<Rectangle fill="#ef4444" stroke="#dc2626" />}
         />
       </BarChart>
     </div>
