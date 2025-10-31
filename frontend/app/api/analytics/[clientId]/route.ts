@@ -23,6 +23,9 @@ export async function GET(request: NextRequest, {params}: {params: Promise<{clie
       let endDateTime: Date | null = null
 
       switch (timeframe) {
+        case 'last24hours':
+          startDateTime = new Date(Date.now() - 24 * 60 * 60 * 1000)
+          break
         case 'last7days':
           startDateTime = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
           break
