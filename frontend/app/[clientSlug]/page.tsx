@@ -64,8 +64,10 @@ export default async function Page({
     }
   }
 
-  const data = await client.fetch(clientQuery, {
-    clientSlug,
+  const {data} = await sanityFetch({
+    query: clientQuery,
+    params: {clientSlug},
+    stega: false,
   })
 
   if (!data || !data?.leadingQuestion || !data.surveyQuestions) {
