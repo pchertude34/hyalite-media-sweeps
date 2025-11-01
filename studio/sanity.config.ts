@@ -63,22 +63,22 @@ export default defineConfig({
       resolve: {
         // The Main Document Resolver API provides a method of resolving a main document from a given route or route pattern. https://www.sanity.io/docs/presentation-resolver-api#57720a5678d9
         mainDocuments: defineDocuments([
+          // {
+          //   route: '/',
+          //   filter: `_type == "settings" && _id == "siteSettings"`,
+          // },
           {
-            route: '/',
-            filter: `_type == "settings" && _id == "siteSettings"`,
-          },
-          {
-            route: '/:slug',
-            filter: `_type == "client" && slug.current == $slug || _id == $slug`,
+            route: '/:clientSlug',
+            filter: `_type == "client" && slug.current == $clientSlug`,
           },
         ]),
         // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/presentation-resolver-api#8d8bca7bfcd7
         locations: {
-          settings: defineLocations({
-            locations: [homeLocation],
-            message: 'This document is used on all pages',
-            tone: 'positive',
-          }),
+          // settings: defineLocations({
+          //   locations: [homeLocation],
+          //   message: 'This document is used on all pages',
+          //   tone: 'positive',
+          // }),
           client: defineLocations({
             select: {
               name: 'name',
@@ -88,29 +88,29 @@ export default defineConfig({
               locations: [
                 {
                   title: doc?.name || 'Untitled',
-                  href: resolveHref('page', doc?.slug)!,
+                  href: resolveHref('client', doc?.slug)!,
                 },
               ],
             }),
           }),
-          post: defineLocations({
-            select: {
-              title: 'title',
-              slug: 'slug.current',
-            },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.title || 'Untitled',
-                  href: resolveHref('post', doc?.slug)!,
-                },
-                {
-                  title: 'Home',
-                  href: '/',
-                } satisfies DocumentLocation,
-              ].filter(Boolean) as DocumentLocation[],
-            }),
-          }),
+          // post: defineLocations({
+          //   select: {
+          //     title: 'title',
+          //     slug: 'slug.current',
+          //   },
+          //   resolve: (doc) => ({
+          //     locations: [
+          //       {
+          //         title: doc?.title || 'Untitled',
+          //         href: resolveHref('post', doc?.slug)!,
+          //       },
+          //       {
+          //         title: 'Home',
+          //         href: '/',
+          //       } satisfies DocumentLocation,
+          //     ].filter(Boolean) as DocumentLocation[],
+          //   }),
+          // }),
         },
       },
     }),
