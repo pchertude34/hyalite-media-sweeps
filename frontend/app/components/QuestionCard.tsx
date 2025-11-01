@@ -35,7 +35,7 @@ export function QuestionCard(props: QuestionCardProps) {
   function handleSurveyQuestionAnswered(answer: NonNullable<Question['answers']>[number]) {
     // wrap around to the first question if at the end
     setQuestionIndex((prevIndex) => {
-      if (prevIndex + 1 >= surveyQuestions.length) {
+      if (prevIndex >= surveyQuestions.length && !draftMode) {
         return 0
       }
       return prevIndex + 1
@@ -62,17 +62,12 @@ export function QuestionCard(props: QuestionCardProps) {
   }
 
   // Show questions until the user answers as many questions as allowed, or they reached the end of all of the questions
-  const showQuestions = draftMode
-    ? hasAnsweredLeadingQuestion && questionIndex < surveyQuestions.length
-    : hasAnsweredLeadingQuestion &&
-      maxAnswers &&
-      questionsAnswered < maxAnswers &&
-      questionIndex < surveyQuestions.length
 
   const showThankYouMessage = draftMode
-    ? hasAnsweredLeadingQuestion && questionIndex >= surveyQuestions.length
-    : hasAnsweredLeadingQuestion &&
-      ((maxAnswers && questionsAnswered >= maxAnswers) || questionIndex >= surveyQuestions.length)
+    ? questionIndex >= surveyQuestions.length
+    : (maxAnswers && questionsAnswered >= maxAnswers) || questionIndex >= surveyQuestions.length
+
+  const showQuestions = hasAnsweredLeadingQuestion && !showThankYouMessage
 
   return (
     <div className="w-full h-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-purple-800 p-4">
