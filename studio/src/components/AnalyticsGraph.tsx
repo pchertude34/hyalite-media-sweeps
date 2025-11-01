@@ -41,8 +41,6 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
   const surveyQuestions = props.document.displayed?.surveyQuestions || []
 
   async function fetchAnalyticsData() {
-    console.log('SANITY_STUDIO_APP_URL :>> ', SANITY_STUDIO_APP_URL)
-    console.log('process.env :>> ', process.env)
     try {
       setLoading(true)
       setError(null)
@@ -57,7 +55,7 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
       }
 
       const response = await fetch(
-        `${SANITY_STUDIO_APP_URL}/api/analytics/${clientSlug}?${params.toString()}`,
+        `${process.env.SANITY_STUDIO_APP_URL}/api/analytics/${clientSlug}?${params.toString()}`,
       )
       const result = await response.json()
 

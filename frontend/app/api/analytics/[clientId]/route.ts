@@ -3,8 +3,6 @@ import {db} from '@/db'
 import {questionAnalyticsTable} from '@/db/schema'
 import {eq, count, and, gte, lte, sql} from 'drizzle-orm'
 
-const {NEXT_PUBLIC_SANITY_STUDIO_URL = ''} = process.env
-
 export async function GET(request: NextRequest, {params}: {params: Promise<{clientId: string}>}) {
   try {
     const {clientId} = await params
@@ -86,7 +84,7 @@ export async function GET(request: NextRequest, {params}: {params: Promise<{clie
       data: chartData,
     })
 
-    res.headers.set('Access-Control-Allow-Origin', NEXT_PUBLIC_SANITY_STUDIO_URL)
+    res.headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || '')
     res.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS')
     res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
@@ -99,7 +97,7 @@ export async function GET(request: NextRequest, {params}: {params: Promise<{clie
 
 export async function OPTIONS() {
   const res = new NextResponse(null, {status: 204})
-  res.headers.set('Access-Control-Allow-Origin', NEXT_PUBLIC_SANITY_STUDIO_URL)
+  res.headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || '')
   res.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   return res
