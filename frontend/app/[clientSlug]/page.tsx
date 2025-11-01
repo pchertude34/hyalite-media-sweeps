@@ -19,8 +19,8 @@ export async function generateStaticParams() {
   return data
 }
 
-export async function generateMetadata(props: {params: {clientSlug: string}}): Promise<Metadata> {
-  const {clientSlug} = props.params
+export async function generateMetadata(): Promise<Metadata> {
+  // const {clientSlug} = props.params
 
   // use this query to get dynamic metadata if needed
   // const {data} = await sanityFetch({
