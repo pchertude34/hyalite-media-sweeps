@@ -35,9 +35,7 @@ const homeLocation = {
 // path for different document types and used in the presentation tool.
 function resolveHref(documentType?: string, slug?: string): string | undefined {
   switch (documentType) {
-    case 'post':
-      return slug ? `/posts/${slug}` : undefined
-    case 'page':
+    case 'client':
       return slug ? `/${slug}` : undefined
     default:
       console.warn('Invalid document type:', documentType)
@@ -48,7 +46,7 @@ function resolveHref(documentType?: string, slug?: string): string | undefined {
 // Main Sanity configuration
 export default defineConfig({
   name: 'default',
-  title: 'Sanity + Next.js Starter Template',
+  title: 'Hyalitye Media Group',
 
   projectId,
   dataset,
