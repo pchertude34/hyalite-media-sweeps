@@ -26,8 +26,6 @@ export function QuestionCard(props: QuestionCardProps) {
     user?.questionIndex && user?.questionIndex < surveyQuestions.length ? user?.questionIndex : 0,
   )
 
-  console.log('templateValues :>> ', templateValues)
-
   function handleLeadingQuestionAnswered(answer: NonNullable<Question['answers']>[number]) {
     setHasAnsweredLeadingQuestion(true)
   }

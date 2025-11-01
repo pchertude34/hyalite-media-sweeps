@@ -6,7 +6,6 @@ import {db} from '@/db'
 import {usersTable} from '@/db/schema'
 import {eq, InferSelectModel, and} from 'drizzle-orm'
 import {notFound} from 'next/navigation'
-import {trackQuestionResponse, updateUserPage} from '../actions'
 
 export default async function Page({
   params,
