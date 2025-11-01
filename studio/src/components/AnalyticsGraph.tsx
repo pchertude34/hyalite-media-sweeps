@@ -41,6 +41,7 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
   const surveyQuestions = props.document.displayed?.surveyQuestions || []
 
   async function fetchAnalyticsData() {
+    console.log('SANITY_STUDIO_APP_URL :>> ', SANITY_STUDIO_APP_URL)
     try {
       setLoading(true)
       setError(null)
