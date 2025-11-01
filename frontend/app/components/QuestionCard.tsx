@@ -66,6 +66,7 @@ export function QuestionCard(props: QuestionCardProps) {
     hasAnsweredLeadingQuestion &&
     maxAnswers &&
     questionsAnswered < maxAnswers &&
+    !draftMode &&
     questionIndex < surveyQuestions.length
 
   const showThankYouMessage =
