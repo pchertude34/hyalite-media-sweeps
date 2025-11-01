@@ -1,5 +1,5 @@
-import {clientMetadataQuery, clientQuery, clientSlugsQuery} from '@/sanity/lib/queries'
-import {client} from '@/sanity/lib/client'
+import {clientQuery, clientSlugsQuery} from '@/sanity/lib/queries'
+import {draftMode} from 'next/headers'
 import {Client} from '@/sanity.types'
 import {QuestionCard} from '../components/QuestionCard'
 import {db} from '@/db'
@@ -43,6 +43,7 @@ export default async function Page({
 }) {
   const {clientSlug} = await params
   const {id, ...templateValues} = await searchParams
+  const {isEnabled: isDraftMode} = await draftMode()
 
   let user: InferSelectModel<typeof usersTable> | undefined
 
@@ -79,6 +80,7 @@ export default async function Page({
       clientData={data as Client}
       user={user}
       templateValues={templateValues as Record<string, string | undefined>}
+      draftMode={isDraftMode}
     />
   )
 }

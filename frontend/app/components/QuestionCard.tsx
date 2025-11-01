@@ -11,6 +11,7 @@ type QuestionCardProps = {
   clientData: Client
   user?: InferSelectModel<typeof usersTable>
   templateValues?: Record<string, string | undefined>
+  draftMode?: boolean
 }
 
 export function QuestionCard(props: QuestionCardProps) {
@@ -18,6 +19,7 @@ export function QuestionCard(props: QuestionCardProps) {
     clientData: {leadingQuestion, surveyQuestions, headline, thankYouMessage, maxAnswers},
     user,
     templateValues,
+    draftMode = false,
   } = props
 
   const [hasAnsweredLeadingQuestion, setHasAnsweredLeadingQuestion] = useState(false)
@@ -68,7 +70,8 @@ export function QuestionCard(props: QuestionCardProps) {
 
   const showThankYouMessage =
     hasAnsweredLeadingQuestion &&
-    ((maxAnswers && questionsAnswered >= maxAnswers) || questionIndex >= surveyQuestions.length)
+    ((maxAnswers && questionsAnswered >= maxAnswers && !draftMode) ||
+      questionIndex >= surveyQuestions.length)
 
   return (
     <div className="w-full h-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-purple-800 p-4">
