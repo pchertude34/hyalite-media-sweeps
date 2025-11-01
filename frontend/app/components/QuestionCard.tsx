@@ -2,7 +2,7 @@
 import React, {useState} from 'react'
 import QuestionResponseButtons from './QuestionResponseButtons'
 import {Client, Question} from '@/sanity.types'
-import {InferSelectModel} from 'drizzle-orm'
+import {InferSelectModel, is} from 'drizzle-orm'
 import {usersTable} from '@/db/schema'
 import {trackQuestionResponse, updateUserPage} from '../actions'
 import {renderTemplate} from '../client-utils'
@@ -62,17 +62,17 @@ export function QuestionCard(props: QuestionCardProps) {
   }
 
   // Show questions until the user answers as many questions as allowed, or they reached the end of all of the questions
-  const showQuestions =
-    hasAnsweredLeadingQuestion &&
-    maxAnswers &&
-    questionsAnswered < maxAnswers &&
-    !draftMode &&
-    questionIndex < surveyQuestions.length
+  const showQuestions = draftMode
+    ? hasAnsweredLeadingQuestion && questionIndex < surveyQuestions.length
+    : hasAnsweredLeadingQuestion &&
+      maxAnswers &&
+      questionsAnswered < maxAnswers &&
+      questionIndex < surveyQuestions.length
 
-  const showThankYouMessage =
-    hasAnsweredLeadingQuestion &&
-    ((maxAnswers && questionsAnswered >= maxAnswers && !draftMode) ||
-      questionIndex >= surveyQuestions.length)
+  const showThankYouMessage = draftMode
+    ? hasAnsweredLeadingQuestion && questionIndex >= surveyQuestions.length
+    : hasAnsweredLeadingQuestion &&
+      ((maxAnswers && questionsAnswered >= maxAnswers) || questionIndex >= surveyQuestions.length)
 
   return (
     <div className="w-full h-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-purple-800 p-4">
