@@ -42,6 +42,7 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
 
   async function fetchAnalyticsData() {
     console.log('SANITY_STUDIO_APP_URL :>> ', SANITY_STUDIO_APP_URL)
+    console.log('process.env :>> ', process.env)
     try {
       setLoading(true)
       setError(null)
