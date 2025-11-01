@@ -5,6 +5,7 @@ import {QuestionCard} from '../components/QuestionCard'
 import {db} from '@/db'
 import {usersTable} from '@/db/schema'
 import {eq, InferSelectModel, and} from 'drizzle-orm'
+import {notFound} from 'next/navigation'
 import {trackQuestionResponse, updateUserPage} from '../actions'
 
 export default async function Page({
@@ -42,7 +43,7 @@ export default async function Page({
   })
 
   if (!data || !data?.leadingQuestion || !data.surveyQuestions) {
-    return <div className="text-gray-600">Question not found</div>
+    notFound()
   }
 
   return (
