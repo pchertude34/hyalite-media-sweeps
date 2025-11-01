@@ -63,7 +63,7 @@ export function QuestionCard(props: QuestionCardProps) {
 
   // Show questions until the user answers as many questions as allowed, or they reached the end of all of the questions
   const showQuestions = draftMode
-    ? hasAnsweredLeadingQuestion && questionIndex < surveyQuestions.length - 1
+    ? hasAnsweredLeadingQuestion && questionIndex < surveyQuestions.length
     : hasAnsweredLeadingQuestion &&
       maxAnswers &&
       questionsAnswered < maxAnswers &&
