@@ -18,6 +18,8 @@ export async function updateUserPage(formData: FormData) {
   const externalId = formData.get('externalId') as string
   const questionIndex = formData.get('questionIndex') as string
 
+  if (!externalId) return
+
   await db
     .update(usersTable)
     .set({questionIndex: Number(questionIndex)})
@@ -32,6 +34,8 @@ export async function trackQuestionResponse(formData: FormData) {
   const questionText = formData.get('questionText') as string
   const answerText = formData.get('answerText') as string
   const answerStatus = formData.get('answerStatus') as string
+
+  if (!externalId) return
 
   await db.insert(questionAnalyticsTable).values({
     externalId,
