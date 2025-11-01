@@ -96,6 +96,17 @@ export const pagesSlugs = defineQuery(`
   {"slug": slug.current}
 `)
 
+export const clientSlugsQuery = defineQuery(`
+  *[_type == "client" && defined(slug.current)]
+  {"clientSlug": slug.current}
+`)
+
+export const clientMetadataQuery = defineQuery(`
+  *[_type == "client" && slug.current == $clientSlug][0]{
+    name,
+    headline,
+}`)
+
 export const clientQuery = defineQuery(`
   *[_type == "client" && slug.current == $clientSlug][0]{
     _id,

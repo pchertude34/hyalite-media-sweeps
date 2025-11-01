@@ -1,4 +1,4 @@
-import {clientQuery} from '@/sanity/lib/queries'
+import {clientMetadataQuery, clientQuery, clientSlugsQuery} from '@/sanity/lib/queries'
 import {client} from '@/sanity/lib/client'
 import {Client} from '@/sanity.types'
 import {QuestionCard} from '../components/QuestionCard'
@@ -6,6 +6,33 @@ import {db} from '@/db'
 import {usersTable} from '@/db/schema'
 import {eq, InferSelectModel, and} from 'drizzle-orm'
 import {notFound} from 'next/navigation'
+import type {Metadata} from 'next'
+import {sanityFetch} from '@/sanity/lib/live'
+
+export async function generateStaticParams() {
+  const {data} = await sanityFetch({
+    query: clientSlugsQuery,
+    perspective: 'published',
+    stega: false,
+  })
+
+  return data
+}
+
+export async function generateMetadata(props: {params: {clientSlug: string}}): Promise<Metadata> {
+  const {clientSlug} = props.params
+
+  // use this query to get dynamic metadata if needed
+  // const {data} = await sanityFetch({
+  //   query: clientMetadataQuery,
+  //   params: {clientSlug},
+  //   stega: false,
+  // })
+
+  return {
+    title: 'Sweepstakes Available!',
+  } satisfies Metadata
+}
 
 export default async function Page({
   params,
