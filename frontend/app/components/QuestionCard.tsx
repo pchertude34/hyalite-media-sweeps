@@ -71,7 +71,7 @@ export function QuestionCard(props: QuestionCardProps) {
 
   return (
     <div className="w-full h-full min-h-screen flex items-center justify-center bg-white p-4">
-      <article className="flex flex-col w-full max-w-4xl min-h-64 p-6 md:p-10 rounded-lg shadow-sm bg-white items-center">
+      <article className="flex flex-col w-full max-w-4xl min-h-64 p-6 md:p-10  items-center">
         <div className="my-auto h-full w-full">
           {headline && (
             <h2 className="text-2xl md:text-3xl mb-10 text-center font-semibold underline">
