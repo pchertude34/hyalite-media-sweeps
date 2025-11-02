@@ -107,15 +107,15 @@ They will be able to access the deployed Studio, where you can collaborate toget
 <iframe id="sweeps-frame" width="600" height="400" style="border:none;"></iframe>
 
   <script>
-    const USER_PARAM = 'id'
-    const CLIENT_URL = 'http://localhost:3000/west-coast-web-designs';
+    const USER_PARAM = 'id';
+    const CLIENT_URL = 'https://hyalite-media-sweeps-frontend-yufd.vercel.app/west-coast-web-designs';
 
     const params = new URLSearchParams(window.location.search);
     const idParam = new URLSearchParams();
 
-    if (params.has(USER_PARAM)) idParam.set(USER_PARAM, params.get(USER_PARAM))
+    if (params.has(USER_PARAM)) idParam.set(USER_PARAM, params.get(USER_PARAM));
 
-    const iframeUrl = CLIENT_URL + (idParam ? '?' + idParam.toString() : '')
+    const iframeUrl = CLIENT_URL + (idParam ? '?' + idParam.toString() : '');
     document.getElementById("sweeps-frame").src = iframeUrl;
   </script>
 ```

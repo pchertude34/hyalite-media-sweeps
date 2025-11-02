@@ -70,7 +70,7 @@ export function QuestionCard(props: QuestionCardProps) {
   const showQuestions = hasAnsweredLeadingQuestion && !showThankYouMessage
 
   return (
-    <div className="w-full h-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-purple-800 p-4">
+    <div className="w-full h-full min-h-screen flex items-center justify-center bg-white p-4">
       <article className="flex flex-col w-full max-w-4xl min-h-64 p-6 md:p-10 rounded-lg shadow-sm bg-white items-center">
         <div className="my-auto h-full w-full">
           {headline && (
