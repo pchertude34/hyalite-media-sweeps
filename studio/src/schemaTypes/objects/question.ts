@@ -10,7 +10,8 @@ export const question = defineType({
     defineField({
       name: 'questionText',
       title: 'Question Text',
-      type: 'string',
+      type: 'array',
+      of: [{type: 'block'}],
       validation: (Rule) => Rule.required(),
     }),
     defineField({

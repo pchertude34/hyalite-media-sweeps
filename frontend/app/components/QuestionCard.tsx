@@ -2,10 +2,15 @@
 import React, {useState} from 'react'
 import QuestionResponseButtons from './QuestionResponseButtons'
 import {Client, Question} from '@/sanity.types'
-import {InferSelectModel, is} from 'drizzle-orm'
+import {InferSelectModel} from 'drizzle-orm'
+import {PortableText} from '@portabletext/react'
 import {usersTable} from '@/db/schema'
 import {trackQuestionResponse, updateUserPage} from '../actions'
-import {renderTemplate} from '../client-utils'
+import {
+  renderTemplate,
+  convertBlocksToPlainText,
+  renderTemplateInBlockContent,
+} from '../client-utils'
 
 type QuestionCardProps = {
   clientData: Client
@@ -53,7 +58,10 @@ export function QuestionCard(props: QuestionCardProps) {
       formData.append('questionIndex', String(questionIndex + 1))
       formData.append('clientId', user.clientId)
       formData.append('questionId', surveyQuestions[questionIndex]._key)
-      formData.append('questionText', surveyQuestions[questionIndex].questionText)
+      formData.append(
+        'questionText',
+        convertBlocksToPlainText(surveyQuestions[questionIndex].questionText),
+      )
       formData.append('answerText', answer.answerText)
       formData.append('answerStatus', answer.answerType)
       updateUserPage(formData)
@@ -70,7 +78,7 @@ export function QuestionCard(props: QuestionCardProps) {
   const showQuestions = hasAnsweredLeadingQuestion && !showThankYouMessage
 
   return (
-    <div className="w-full h-full min-h-screen flex items-center justify-center bg-white p-4">
+    <div className="w-full h-full min-h-screen flex justify-center bg-white p-4">
       <article className="flex flex-col w-full max-w-4xl min-h-64 p-6 md:p-10  items-center">
         <div className="my-auto h-full w-full">
           {headline && (
@@ -80,9 +88,18 @@ export function QuestionCard(props: QuestionCardProps) {
           )}
           {!hasAnsweredLeadingQuestion && (
             <>
-              <p className="text-lg md:text-xl mb-10 text-center">
-                {renderTemplate(leadingQuestion.questionText, {...templateValues})}
-              </p>
+              <div className="prose mx-auto text-center mb-4">
+                <PortableText
+                  components={{
+                    block: {
+                      normal: ({children}) => <p className="text-lg md:text-xl">{children}</p>,
+                    },
+                  }}
+                  value={renderTemplateInBlockContent(leadingQuestion.questionText, {
+                    ...templateValues,
+                  })}
+                />
+              </div>
               <QuestionResponseButtons
                 answers={leadingQuestion.answers}
                 onAnswer={handleLeadingQuestionAnswered}
@@ -91,9 +108,16 @@ export function QuestionCard(props: QuestionCardProps) {
           )}
           {showQuestions && (
             <>
-              <p className="text-lg md:text-xl text-center mb-10">
-                {surveyQuestions[questionIndex].questionText}
-              </p>
+              <div className="prose mx-auto text-center mb-4">
+                <PortableText
+                  components={{
+                    block: {
+                      normal: ({children}) => <p className="text-lg md:text-xl">{children}</p>,
+                    },
+                  }}
+                  value={surveyQuestions[questionIndex].questionText}
+                />
+              </div>
               <QuestionResponseButtons
                 answers={surveyQuestions[questionIndex].answers}
                 onAnswer={handleSurveyQuestionAnswered}

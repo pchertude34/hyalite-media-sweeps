@@ -32,3 +32,32 @@ export function handleError(error: unknown) {
 export function renderTemplate(template: string, values: Record<string, string | undefined>) {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key) => values[key] ?? '')
 }
+
+export function renderTemplateInBlockContent(
+  blocks: any[],
+  values: Record<string, string | undefined>,
+): any[] {
+  return blocks.map((block) => {
+    if (block._type !== 'block' || !block.children) {
+      return block
+    }
+    return {
+      ...block,
+      children: block.children.map((child: any) => ({
+        ...child,
+        text: renderTemplate(child.text, values),
+      })),
+    }
+  })
+}
+
+export function convertBlocksToPlainText(blocks: any[]): string {
+  return blocks
+    .map((block) => {
+      if (block._type !== 'block' || !block.children) {
+        return ''
+      }
+      return block.children.map((child: any) => child.text).join('')
+    })
+    .join('\n\n')
+}
