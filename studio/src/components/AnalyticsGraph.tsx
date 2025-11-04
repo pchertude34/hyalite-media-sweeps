@@ -195,9 +195,13 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
                         <Text weight="semibold">{`${label}`}</Text>
                         {payload.map((entry, index) => (
                           <Text key={index} style={{color: entry.color}}>
-                            {`${entry.dataKey === 'positive' ? 'Positive' : 'Negative'}: ${
-                              entry.value
-                            }`}
+                            {`${
+                              entry.dataKey === 'positive'
+                                ? 'Positive'
+                                : entry.dataKey === 'negative'
+                                  ? 'Negative'
+                                  : 'Impressions'
+                            }: ${entry.value}`}
                           </Text>
                         ))}
                         <Text weight="semibold">{`Total: ${total}`}</Text>
@@ -209,6 +213,7 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
               }}
             />
             <Legend />
+
             <Bar
               dataKey="positive"
               stackId="a"
@@ -222,6 +227,12 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
               fill="#f87171"
               name="Negative Responses"
               activeBar={<Rectangle fill="#ef4444" stroke="#dc2626" />}
+            />
+            <Bar
+              dataKey="impressions"
+              fill="#9ca3af"
+              name="Impressions"
+              activeBar={<Rectangle fill="#6b7280" stroke="#4b5563" />}
             />
           </BarChart>
         </Stack>

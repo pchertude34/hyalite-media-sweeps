@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server'
 import {db} from '@/db'
-import {questionAnalyticsTable} from '@/db/schema'
+import {questionAnalyticsTable, questionImpressionsTable} from '@/db/schema'
 import {eq, count, and, gte, lte, sql} from 'drizzle-orm'
 
 export async function GET(request: NextRequest, {params}: {params: Promise<{clientId: string}>}) {
@@ -15,6 +15,7 @@ export async function GET(request: NextRequest, {params}: {params: Promise<{clie
 
     // Build date conditions
     let dateConditions: any[] = [eq(questionAnalyticsTable.clientId, clientId)]
+    let impressionsDateConditions: any[] = [eq(questionImpressionsTable.clientId, clientId)]
 
     if (timeframe && timeframe !== 'all') {
       let startDateTime: Date | null = null
@@ -41,9 +42,11 @@ export async function GET(request: NextRequest, {params}: {params: Promise<{clie
 
       if (startDateTime) {
         dateConditions.push(gte(questionAnalyticsTable.createdAt, startDateTime))
+        impressionsDateConditions.push(gte(questionImpressionsTable.createdAt, startDateTime))
       }
       if (endDateTime) {
         dateConditions.push(lte(questionAnalyticsTable.createdAt, endDateTime))
+        impressionsDateConditions.push(lte(questionImpressionsTable.createdAt, endDateTime))
       }
     }
 
@@ -63,17 +66,29 @@ export async function GET(request: NextRequest, {params}: {params: Promise<{clie
         questionAnalyticsTable.answerStatus,
       )
 
+    const impressions = await db
+      .select({
+        questionId: questionImpressionsTable.questionId,
+        count: count(),
+      })
+      .from(questionImpressionsTable)
+      .where(and(...impressionsDateConditions))
+      .groupBy(questionImpressionsTable.questionId)
+
     // Transform data for charts
     const chartData = analytics.reduce((acc: any[], item) => {
       const existing = acc.find((d: any) => d.questionId === item.questionId)
       if (existing) {
         existing[item.answerStatus] = (existing[item.answerStatus] || 0) + item.count
         existing.total = (existing.total || 0) + item.count
+        existing.impressions =
+          impressions.find((imp) => imp.questionId === item.questionId)?.count || 0
       } else {
         acc.push({
           questionId: item.questionId,
           [item.answerStatus]: item.count,
           total: item.count,
+          impressions: impressions.find((imp) => imp.questionId === item.questionId)?.count || 0,
         })
       }
       return acc
