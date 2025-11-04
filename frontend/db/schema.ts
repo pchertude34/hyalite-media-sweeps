@@ -16,7 +16,7 @@ export const questionAnalyticsTable = pgTable(
   'question_analytics',
   {
     id: serial('id').primaryKey(),
-    externalId: varchar('external_id').notNull(),
+    externalId: varchar('external_id'),
     questionIndex: integer('question_index').notNull(),
     clientId: varchar('client_id').notNull(),
     questionId: varchar('question_id').notNull(),
@@ -32,7 +32,7 @@ export const questionImpressionsTable = pgTable(
   'question_impressions',
   {
     id: serial('id').primaryKey(),
-    externalId: varchar('external_id').notNull(),
+    externalId: varchar('external_id'),
     questionIndex: integer('question_index').notNull(),
     clientId: varchar('client_id').notNull(),
     questionId: varchar('question_id').notNull(),

@@ -2,7 +2,7 @@
 
 import {draftMode} from 'next/headers'
 import {db} from '@/db'
-import {questionAnalyticsTable, usersTable} from '@/db/schema'
+import {questionAnalyticsTable, questionImpressionsTable, usersTable} from '@/db/schema'
 import {eq} from 'drizzle-orm'
 
 export async function disableDraftMode() {
@@ -45,5 +45,21 @@ export async function trackQuestionResponse(formData: FormData) {
     questionText,
     answerText,
     answerStatus,
+  })
+}
+
+export async function trackQuestionImpression(formData: FormData) {
+  const externalId = formData.get('externalId') as string
+  const questionIndex = formData.get('questionIndex') as string
+  const clientId = formData.get('clientId') as string
+  const questionId = formData.get('questionId') as string
+  const questionText = formData.get('questionText') as string
+
+  await db.insert(questionImpressionsTable).values({
+    externalId,
+    questionIndex: Number(questionIndex),
+    clientId,
+    questionId,
+    questionText,
   })
 }

@@ -1,11 +1,11 @@
 'use client'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import QuestionResponseButtons from './QuestionResponseButtons'
 import {Client, Question} from '@/sanity.types'
 import {InferSelectModel} from 'drizzle-orm'
 import {PortableText} from '@portabletext/react'
 import {usersTable} from '@/db/schema'
-import {trackQuestionResponse, updateUserPage} from '../actions'
+import {trackQuestionResponse, updateUserPage, trackQuestionImpression} from '../actions'
 import {
   renderTemplate,
   convertBlocksToPlainText,
@@ -21,7 +21,7 @@ type QuestionCardProps = {
 
 export function QuestionCard(props: QuestionCardProps) {
   const {
-    clientData: {leadingQuestion, surveyQuestions, headline, thankYouMessage, maxAnswers},
+    clientData: {slug, leadingQuestion, surveyQuestions, headline, thankYouMessage, maxAnswers},
     user,
     templateValues,
     draftMode = false,
@@ -32,6 +32,29 @@ export function QuestionCard(props: QuestionCardProps) {
   const [questionIndex, setQuestionIndex] = useState(
     user?.questionIndex && user?.questionIndex < surveyQuestions.length ? user?.questionIndex : 0,
   )
+
+  // Show questions until the user answers as many questions as allowed, or they reached the end of all of the questions
+
+  const showThankYouMessage = draftMode
+    ? questionIndex >= surveyQuestions.length
+    : (maxAnswers && questionsAnswered >= maxAnswers) || questionIndex >= surveyQuestions.length
+
+  const showQuestions = hasAnsweredLeadingQuestion && !showThankYouMessage
+  useEffect(() => {
+    if (showQuestions) {
+      console.log('tracking impression', questionIndex)
+      const formData = new FormData()
+      formData.append('externalId', user?.externalId || '')
+      formData.append('questionIndex', String(questionIndex))
+      formData.append('clientId', slug.current)
+      formData.append('questionId', surveyQuestions[questionIndex]._key)
+      formData.append(
+        'questionText',
+        convertBlocksToPlainText(surveyQuestions[questionIndex].questionText),
+      )
+      trackQuestionImpression(formData)
+    }
+  }, [showQuestions, questionIndex])
 
   function handleLeadingQuestionAnswered(answer: NonNullable<Question['answers']>[number]) {
     setHasAnsweredLeadingQuestion(true)
@@ -68,14 +91,6 @@ export function QuestionCard(props: QuestionCardProps) {
       trackQuestionResponse(formData)
     }
   }
-
-  // Show questions until the user answers as many questions as allowed, or they reached the end of all of the questions
-
-  const showThankYouMessage = draftMode
-    ? questionIndex >= surveyQuestions.length
-    : (maxAnswers && questionsAnswered >= maxAnswers) || questionIndex >= surveyQuestions.length
-
-  const showQuestions = hasAnsweredLeadingQuestion && !showThankYouMessage
 
   return (
     <div className="w-full h-full min-h-screen flex justify-center bg-white p-4">
