@@ -82,7 +82,7 @@ export function QuestionCard(props: QuestionCardProps) {
       <article className="flex flex-col w-full max-w-4xl min-h-64 p-6 md:p-10  items-center">
         <div className="my-auto h-full w-full">
           {headline && (
-            <h2 className="text-2xl md:text-3xl mb-10 text-center font-semibold underline">
+            <h2 className="text-2xl md:text-3xl mb-10 text-center font-bold">
               {renderTemplate(headline, {...templateValues})}
             </h2>
           )}
