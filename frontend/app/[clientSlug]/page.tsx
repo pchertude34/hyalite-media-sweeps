@@ -73,7 +73,7 @@ export default async function Page({
 
   console.log('client data:', data)
 
-  if (!data || !data.surveyQuestions) {
+  if (!data) {
     notFound()
   }
 
