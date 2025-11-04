@@ -58,7 +58,6 @@ export const client = defineType({
       type: 'question',
       description:
         "The question presented to users before the survey questions. Use {{name}} to template the user's name.",
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'surveyQuestions',

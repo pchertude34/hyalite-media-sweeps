@@ -34,12 +34,13 @@ export function QuestionCard(props: QuestionCardProps) {
   )
 
   // Show questions until the user answers as many questions as allowed, or they reached the end of all of the questions
-
+  const showLeadingQuestion = leadingQuestion && !hasAnsweredLeadingQuestion
   const showThankYouMessage = draftMode
     ? questionIndex >= surveyQuestions.length
     : (maxAnswers && questionsAnswered >= maxAnswers) || questionIndex >= surveyQuestions.length
 
-  const showQuestions = hasAnsweredLeadingQuestion && !showThankYouMessage
+  const showQuestions = !showLeadingQuestion && !showThankYouMessage
+
   useEffect(() => {
     if (showQuestions) {
       console.log('tracking impression', questionIndex)
@@ -101,7 +102,7 @@ export function QuestionCard(props: QuestionCardProps) {
               {renderTemplate(headline, {...templateValues})}
             </h2>
           )}
-          {!hasAnsweredLeadingQuestion && (
+          {showLeadingQuestion && (
             <>
               <div className="prose mx-auto text-center mb-4">
                 <PortableText

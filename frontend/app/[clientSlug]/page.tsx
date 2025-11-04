@@ -71,7 +71,9 @@ export default async function Page({
     stega: false,
   })
 
-  if (!data || !data?.leadingQuestion || !data.surveyQuestions) {
+  console.log('client data:', data)
+
+  if (!data || !data.surveyQuestions) {
     notFound()
   }
 
