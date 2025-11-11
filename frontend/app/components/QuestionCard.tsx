@@ -43,7 +43,6 @@ export function QuestionCard(props: QuestionCardProps) {
 
   useEffect(() => {
     if (showQuestions) {
-      console.log('tracking impression', questionIndex)
       const formData = new FormData()
       formData.append('externalId', user?.externalId || '')
       formData.append('questionIndex', String(questionIndex))
