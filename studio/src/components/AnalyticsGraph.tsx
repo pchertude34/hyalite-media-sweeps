@@ -3,6 +3,9 @@ import {BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend} 
 import {Card, Stack, Box, Text, Label, Select, Inline, Button} from '@sanity/ui'
 import {RefreshIcon} from '@sanity/icons'
 import DatePicker from 'react-multi-date-picker'
+import {Grid} from 'gridjs-react'
+
+import 'gridjs/dist/theme/mermaid.css'
 
 // Use NEXT_PUBLIC_ prefix for client-side access, with fallback
 const {SANITY_STUDIO_APP_URL} = process.env
@@ -44,6 +47,8 @@ type AnalyticsData = {
   positive?: number
   negative?: number
   total: number
+  impressions?: number
+  questionIndex: number
 }
 
 export function AnalyticsGraph(props: AnalyticsGraphProps) {
@@ -111,6 +116,7 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
     fetchAnalyticsData()
   }, [clientSlug])
 
+  console.log('data :>> ', data)
   return (
     <Stack space={4} padding={4}>
       <Text size={4}>Survey Analytics for {props.document.displayed?.name}</Text>
@@ -237,6 +243,39 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
           </BarChart>
         </Stack>
       </Card>
+      <Card padding={4} shadow={1} radius={2} tone="neutral">
+        <Grid
+          data={data.map((item) => ({
+            questionIndex: item.questionIndex + 1,
+            questionText: convertBlocksToPlainText(item.questionText),
+            positive: item.positive || 0,
+            negative: item.negative || 0,
+            impressions: item.impressions || 0,
+            total: item.total,
+          }))}
+          sort={true}
+          resizable
+          columns={[
+            {name: '#', id: 'questionIndex', width: '80px'},
+            {id: 'questionText', name: 'Question'},
+            {id: 'positive', name: '+', width: '80px'},
+            {id: 'negative', name: '-', width: '80px'},
+            {id: 'total', name: 'Total', width: '80px'},
+            {id: 'impressions', name: 'Impressions', width: '80px'},
+          ]}
+        />
+      </Card>
     </Stack>
   )
+}
+
+export function convertBlocksToPlainText(blocks: any[]): string {
+  return blocks
+    .map((block) => {
+      if (block._type !== 'block' || !block.children) {
+        return ''
+      }
+      return block.children.map((child: any) => child.text).join('')
+    })
+    .join('\n\n')
 }
