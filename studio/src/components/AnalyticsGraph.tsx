@@ -49,6 +49,7 @@ type AnalyticsData = {
   total: number
   impressions?: number
   questionIndex: number
+  questionTextPlain?: string
 }
 
 export function AnalyticsGraph(props: AnalyticsGraphProps) {
@@ -87,10 +88,15 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
           const questionIndex = surveyQuestions.findIndex((q: any) => q._key === item.questionId)
           const questionText =
             questionIndex !== -1 ? surveyQuestions[questionIndex].questionText : 'Unknown Question'
+          const questionTextPlain =
+            Array.isArray(questionText) && questionText.length
+              ? convertBlocksToPlainText(questionText)
+              : String(questionText || '')
           return {
             ...item,
             questionText,
             questionIndex,
+            questionTextPlain,
           }
         })
 
@@ -116,7 +122,6 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
     fetchAnalyticsData()
   }, [clientSlug])
 
-  console.log('data :>> ', data)
   return (
     <Stack space={4} padding={4}>
       <Text size={4}>Survey Analytics for {props.document.displayed?.name}</Text>
@@ -183,12 +188,16 @@ export function AnalyticsGraph(props: AnalyticsGraphProps) {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
-              dataKey="questionId"
+              dataKey="questionTextPlain"
               tick={{fontSize: 12}}
               interval={0}
               angle={-45}
               textAnchor="end"
               height={100}
+              tickFormatter={(value) => {
+                const text = String(value || '')
+                return text.length > 12 ? `${text.slice(0, 12)}...` : text
+              }}
             />
             <YAxis width="auto" />
             <Tooltip

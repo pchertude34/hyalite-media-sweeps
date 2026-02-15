@@ -37,6 +37,8 @@ export async function trackQuestionResponse(formData: FormData) {
 
   if (!externalId) return
 
+  console.log('inserting in db')
+
   await db.insert(questionAnalyticsTable).values({
     externalId,
     questionIndex: Number(questionIndex),
