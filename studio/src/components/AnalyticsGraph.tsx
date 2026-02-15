@@ -5,7 +5,7 @@ import {RefreshIcon} from '@sanity/icons'
 import DatePicker from 'react-multi-date-picker'
 import {Grid} from 'gridjs-react'
 
-import 'gridjs/dist/theme/mermaid.css'
+import './gridjs-mermaid.css'
 
 // Use NEXT_PUBLIC_ prefix for client-side access, with fallback
 const {SANITY_STUDIO_APP_URL} = process.env
