@@ -71,8 +71,6 @@ export default async function Page({
     stega: false,
   })
 
-  console.log('client data:', data)
-
   if (!data) {
     notFound()
   }

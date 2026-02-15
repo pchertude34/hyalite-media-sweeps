@@ -72,7 +72,9 @@ export function QuestionCard(props: QuestionCardProps) {
     setQuestionsAnswered((prev) => prev + 1)
 
     if (answer.answerUrl) {
-      window.open(answer.answerUrl, '_blank', 'noopener,noreferrer')
+      // replace any {{key}}'s in the url with matching query params
+      const resolvedAnswerUrl = renderTemplate(answer.answerUrl, templateValues ?? {})
+      window.open(resolvedAnswerUrl, '_blank', 'noopener,noreferrer')
     }
 
     if (user) {
